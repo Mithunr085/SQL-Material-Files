@@ -1,0 +1,31 @@
+-- Question 1
+/* 1} Create a stored procedure getCustomer(city) to fetch all customer details based on the city.
+Write a procedure that takes a city name as an input parameter and retrieves all details of customers who reside in that city. 
+For example, calling getCustomer('Pune') should return all customers from Pune.
+*/
+delimiter //
+create procedure getCustomer(cities varchar(50))
+begin
+	select * from customers where city in (select city from employee  where city = cities);
+end //
+delimiter ;
+
+call getCustomer('Bangalore');
+
+-- Question 2
+
+
+/*
+Create a stored procedure getEmployeesBySalary(min, max) to display all employee details within a given range of salary.
+Write a procedure that takes two parameters, minimum and maximum salary, and retrieves all employee details whose salaries fall within this range. 
+For example, calling getEmployeesBySalary(30000, 50000) should return all employees with salaries between 30,000 and 50,000.
+*/
+
+delimiter //
+create procedure getEmployeeBySalary(min float,max float)
+begin
+	select * from employee where salary between min and max;
+end //
+delimiter ;
+select * from employee;
+call getEmployeeBySalary(20000,50000);

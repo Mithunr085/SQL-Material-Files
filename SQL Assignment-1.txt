@@ -1,0 +1,91 @@
+Question :------------------
+Q.create table Student with fields id,name,dob,city,percentage
+	- insert 5 records and display the table.
+	- display table in ascending order of percentage
+	- display students who has percentage greater than 60
+	- display students whose name starts with 's'
+	- display name and percentage of student who has percentage less than 35
+	- display students who has percentage greater than 80 and who is living in 'Banglore' city
+	- display students whose percentage is not in the range of 60 to 100
+	
+	Perform below queries on Student table(id,name,dob,city,percentage)
+	- add phone_no column after name.
+	- update phone_no of all students
+	- change datatype of city into varchar(15)
+	- change datatype of percentage into float(5,2)
+	- add emailId column after city
+	- update city of only those students who is having percentage greater than 75
+	- delete student record if student is having id=105
+	- delete student if student is having percentage less than 15
+	- drop column email_id.
+----------------------------------------------------------------------------------------------
+solution  
+-- .create table Student with fields id,name,dob,city,percentage
+
+create table Student
+(
+	std_id int,
+    std_name varchar(30),
+    DOB date,
+    city varchar(30),
+    percentage int
+);
+select * from student;
+
+-- task 1- insert 5 records and display the table
+insert into Student values(101,'Mithun','2002-12-25','Bangalore',90);
+insert into Student values(102,'Vardhan','2002-04-17','kocchi',30);
+insert into Student values(103,'Ganesh','2002-08-01','Chennai',76);
+insert into Student values(104,'Ajay','2002-05-23','Hyderabad',55);
+insert into Student values(105,'suresh','2002-04-20','Mysore',60);
+
+-- task 2 - display table in ascending order of percentage
+select * from student order by percentage;
+-- task 3 -  display students who has percentage greater than 60
+select * from student where percentage > 60;
+-- task 4 - display students whose name starts with 's'
+select * from student where std_name  like 's%';
+-- task 5 - display name and percentage of student who has percentage less than 35
+select std_name , percentage from student where percentage <35
+--task 6-display students who has percentage greater than 80 and who is living in 'Banglore' city
+select * from student where city = 'Bangalore' and percentage >80;
+-- task 7 - display students whose percentage is not in the range of 60 to 100
+select * from student where percentage not between 60 and 100;
+
+-- QUERIES(q)
+-- q1 -  add phone_no column after name
+alter table student
+add phone_no int after std_name;
+-- q2 -  update phone_no of all students
+alter table student
+modify phone_no bigint;
+
+update student
+set phone_no = 6363790975 where std_id =101;
+update student
+set phone_no = 9719719719 where std_id =102;
+update student
+set phone_no = 9876543210 where std_id =103;
+update student
+set phone_no = 9867542311 where std_id =104;
+update student
+set phone_no = 9988776655 where std_id =105;
+-- q3 - change datatype of city into varchar(15)
+alter table student
+modify city varchar(15);
+-- q4 -  change datatype of percentage into float(5,2)
+alter table student
+modify percentage float(5,2);
+-- q5 - add emailId column after city
+alter table student
+add email_id varchar(30) after city;
+-- q6 - update city of only those students who is having percentage greater than 75
+update student
+set city ='Mangalore' where percentage >75;
+-- q7 - delete student record if student is having id=105
+delete from student where std_id=105;
+-- q8 -  delete student if student is having percentage less than 15
+delete from student where percentage<15.00;
+-- q9 - drop column email_id.
+alter table student
+drop email_id;

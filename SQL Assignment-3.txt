@@ -1,0 +1,23 @@
+use batch12026;
+
+create table supplier
+(
+	supplier_id int primary key ,
+    supplier_name varchar(100) not null,
+    contact_email varchar(100) unique,
+    phone_number varchar(15) unique,
+    address varchar(200) not null,
+    city varchar(50) not null,
+    country varchar(50) not null default 'USA',
+    rating decimal(3,2) check(rating >= 0 and rating <=5)
+);
+desc supplier;
+select * from supplier;
+insert into supplier(supplier_id,supplier_name,contact_email,phone_number,address,city,country,rating) values
+(101,'Rajesh','rajesh@gmail.com','9876543219','Church Street','Bangalore','India',4.5),
+(102,'Raj','raj@gmail.com','9988776655','church-hill road','Sydney','Australia',2.3),
+(103,'Rajini','rajini@gmail.com','9898989898','Charminar road','Hyderabad','India',3.6),
+(104,'Raju','raju@gmail.com','9998887771','Food Street','Bangalore','India',3.8);
+
+insert into supplier(supplier_id,supplier_name,contact_email,phone_number,address,city,rating) values
+(105,'suresh','suresh@gmail.com','9886663321','Bourbon Street','Washington DC',1.8);

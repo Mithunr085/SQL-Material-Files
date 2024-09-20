@@ -1,0 +1,490 @@
+SQL NOTES 
+create database Batch12026;
+use Batch12026;
+
+-- creating table [DDL cmd]
+create table Employee
+(
+	emp_id int,
+    emp_name varchar(50),
+    salary float,
+    DOJ date,
+    designation varchar(30)
+);  
+
+-- inserting into table Employee [DML cmd]
+insert into Employee values (101,'Mithun',50000,'2024-10-10','Developer'); 
+insert into Employee values (102,'Vardhan',30000,'2024-12-16','HR');
+insert into Employee values (103,'Ajay',25000,'2024-01-19','Manager');
+insert into Employee values (104,'Ganesh',40000,'2024-11-01','HR');
+insert into Employee values (105,'Dheeraj',45000,'2024-09-01','Accountant');
+
+
+select * from Employee;
+
+-- where clause to check conditions 
+select * from Employee where emp_id=103;
+select emp_name, salary from Employee where emp_id=101;
+
+select * from Employee where salary >30000 and designation ='HR'; -- where with and :-represents both statements true
+select * from Employee where salary >30000 or designation ='HR'; -- where with or :-represents anyone statement true 
+
+select * from Employee where salary between 20000 and 50000; -- where with between statement in the specified range
+
+-- where with in operator
+select * from Employee where designation in('HR','Developer');
+
+-- like pattern  matching
+select * from Employee where emp_name like 'a%';
+select * from Employee where emp_name like '%n';
+select * from Employee where emp_name like '%j%';
+
+-- where with NOT operator
+select * from Employee where salary not between 30000 and 50000;
+select * from Employee where designation not in('HR','Developer');
+select * from Employee where emp_name not like '%j%';
+
+-- order by clause  is used to sort the data in assecending or descending order
+select * from Employee order by emp_name;
+select * from Employee order by salary desc;
+
+-- alter :- used to change the structure of table ,i.e. modify columns and constraints from exixting table 
+-- adding new column city in existing table
+-- alter is ddl statement
+alter table Employee -- [ddl]
+add city varchar(30);
+
+desc employee;
+
+-- modify column 
+alter table employee
+modify city varchar(50);
+
+alter table employee 
+add email varchar(50) after salary;
+
+-- dropping column
+alter table employee
+drop column email;
+
+-- to drop table := it will delete both structure and records of table [ddl]
+drop table employee;
+
+-- truncate table  := deletes the all records in the table but structure will remain same [ddl]
+truncate table employee;
+
+-- rename := used to change table name [ddl]
+alter table emp
+rename to employee;
+
+-- update cmd [dml] := used to update/change only records of existing table not structure
+update employee 
+set city ='Bangalore'
+where emp_id = 101;
+
+
+
+Clauses
+--where := used as condition
+-- 
+
+DDL Commands
+-- alter := to alter the table structure
+eg: alter table employee
+	add city varchar(50);
+--modify := used to change the structure of records
+eg: alter table employee
+	modify city varchar(50);
+--rename := used to rename the table
+eg: alter table employee
+	rename to emp;
+--drop := deletes table(records and structure)
+eg: alter table employee
+	drop column city
+--create := used to create table or database
+--update := used to change the table structure 
+
+DML Commands
+--insert := used to enter the records for the existing table
+-- truncate := to delete all the records in the table but not structure
+
+--------------------------------------------------------------------------------------
+Constraints 
+
+1.notnull
+2.primary key
+3.unique key
+4.check
+5.default
+6.foreign key
+
+create table person
+(
+	id int primary key, -- only one primary key exists per table
+    name varchar(30) not null,
+    email varchar(30) unique,
+     age int check(age >18),
+    city varchar(50) default 'Bangalore'
+);
+desc person;
+select * from person;
+insert into person values(101,'Mithun','mithunrmithunr2@gmail.com',22,'Bangalore');
+insert into person(id,name,email,age) values(102,'Dheeraj','dheeraj@gmail.com',26); -- using default 
+insert into person values(103,'Ajay','Ajay@gmail.com',22,'Hyderabad');
+insert into person values(104,'Ganesh','gani@gmail.com',21,'Mangalore');
+insert into person values(105,'vardhan','vardhan@gmail.com',20,'Mysore');
+
+-- constraints on exixting tables 
+select * from employee;
+desc employee;
+
+-- adding primary key
+alter table employee -- method 1
+add primary key (emp_id);
+
+alter table employee -- method 2
+add constraint PK_employee primary key (emp_id);
+
+-- dropping primary key
+alter table employee
+drop primary key;
+
+-- adding check constraint 
+alter table employee
+add constraint CHK_employee check(salary>=15000);
+
+-- dropping check constraint
+alter table employee
+drop check CHK_employee;
+
+-- adding default constraint
+alter table employee
+alter city set default 'Agra';
+
+-- dropping default constraint
+alter table employee
+alter city 
+drop default
+
+-------------------------------------------
+foreign key 
+
+
+create table customer
+(
+	cust_id int primary key,
+    cust_name varchar(50) not null,
+    phone varchar(20) unique,
+    address varchar(100)
+);
+
+insert into customer(cust_id,cust_name,phone,address) values -- bulk data inserting
+(101,'Mithun','6363700975','Bangalore'),
+(102,'Ganesh','9876700975','Mysore'),
+(103,'Suresh','9963733953','Mangalore'),
+(104,'Ramesh','9873563788','Mysore'),
+(105,'Dheeraj','983483456','Bangalore');
+
+select * from customer;
+
+create table order_detail
+(
+	order_id int primary key,
+    order_date date,
+    bill_amount float,
+    cust_id int,
+    constraint FK_order foreign key(cust_id) references customer(cust_id)
+);
+select * from order_detail;
+insert into order_detail(order_id,order_date,bill_amount,cust_id) values
+(201,'2024-07-07',45000,101),
+(202,'2024-03-27',10000,105),
+(203,'2024-07-07',90000,101),
+(204,'2024-04-13',5000,103),
+(205,'2024-07-07',67000,104),
+(206,'2024-12-14',36000,103);
+insert into order_detail values(207,'2024-07-07',27500,104);
+
+-- inner join 
+select customer.cust_name,customer.address,order_detail.order_date,order_detail.bill_amount
+from customer inner join order_detail
+on customer.cust_id = order_detail.cust_id;
+
+-- left join
+select customer.cust_name,customer.address,order_detail.order_date,order_detail.bill_amount
+from customer left join order_detail
+on customer.cust_id = order_detail.cust_id;
+
+-- right join
+select customer.cust_name,customer.address,order_detail.order_date,order_detail.bill_amount
+from customer right join order_detail
+on customer.cust_id = order_detail.cust_id;
+
+-- cross join (if where is used then it becomes inner join)
+select customer.cust_name,customer.address,order_detail.order_date,order_detail.bill_amount
+from customer cross join order_detail;
+
+-- self join
+select c1.cust_id,c2.cust_name
+from customer as c1, customer c2
+where c1.cust_id<c2.cust_id
+
+
+-- Aggregate Functions
+
+select count(emp_id) as Number_of_employees from employee; -- count function
+select sum(salary) as Total_salary from employee; -- sum function
+select avg(salary) as Total_salary_average from employee; -- average  function
+select max(salary)as Maximum_salary,emp_name  from employee; -- max function
+select min(salary) as Minimum_salary,emp_name  from employee; -- min function
+
+-- group by clause := it is used to collect data from multiple records and group the result by one or more columns
+
+select sum(salary) as Total_salary,designation from employee group by designation;
+select count(emp_id) as Number_of_employees,city from employee group by city; 
+
+-- having clause := it is used with group by & it always returns rows when condition is true
+
+select sum(salary) as Total_salary,designation from employee group by designation having sum(salary)>40000;
+
+-- limit :
+select * from employee limit 2;
+
+
+-- distinct
+select distinct designation from employee;
+select distinct city from employee;
+
+-- order of clauses - select from where groupby having order by
+
+-- subquery 
+/*
+1. a query which is nested another query 
+2.a subquery is known as inner query , a query that contains the inner query is known as outer query
+3.inner query is executed 1st , gives the result to outer query & then outer query will be performed
+4.subquery shd be used alwyas used in paranthesis()
+5. we cannot have ORDER BY clause in subquery although it can be used in main query
+6. we can use various  comparison operators with subqueries such as >,<,>=,<=,=,etc.
+7.if the main query doesnt have multiple columns for subquery then a subquery can have only one column in the select command.
+*/
+
+select * from employee where salary > (select avg(salary ) from employee);
+
+-- display the record of highest salaried employee
+select * from employee where salary = (select max(salary) from employee);
+select * from employee order by salary desc limit 0,1; -- limit (position , count)
+
+-- display of 2nd highest salary
+select * from employee order by salary desc limit 1,1;
+
+select max(salary) as salary, emp_name from employee where salary <> (select max(salary)  from employee ) group by salary,emp_name  ;
+
+SELECT emp_name, salary
+FROM employee
+WHERE salary = (
+    SELECT MAX(salary)
+    FROM employee
+    WHERE salary < (SELECT MAX(salary) FROM employee)
+);
+
+-- TCL(Transaction Conntrol Language ) command := this cmd deals with transaction within the db
+
+1. commit; -- to save the transaction(data) permanently in db when we use dml cmds like insert ,update ,delete changes made by these cmds are not permanent until the current session is closed ,the changes made by these cmds can be roll-back to avoid that we use commit cmd to mark the changes as permanent . 
+eg: commit;
+
+2.rollback(undo) ; -- it rollbacks a transaction in case of any error occur , it restores the db to last committed state.it is also used with save point cmd to jump to a save point in an ongoing transaction .
+ eg: rollback to savepoint_name;
+
+3.savepoint ; -- it sets a save point within a transaction , it is used to temporarily save the transaction so that u can rollback to that point whenever required .
+eg savepoint savepoint_name ;
+
+-- TCL COMMANDS execute
+
+set autocommit =0;
+desc person;
+select * from person;
+
+-- insert into person values(106,'ramu','ramu@gmail.com',34,'Mysore');
+
+update person
+set age = 54 where id = 106;
+savepoint A;
+
+insert into person values(107,'ramesh','ramesh@gmail.com',34,'Mangalore');
+savepoint B;
+
+rollback to A;
+----------------------------------------------------------------------------------------------------------
+
+DCL (Data Control Language) := used  to deal with rights , permission & other ctrl of the db system.
+
+1.Grant : give rights / permission
+2.Revoke : withdraw permission/rights
+
+
+-- creating a user 
+create user user1@localhost identified by 'user123';
+-- to show the list of users 
+select users from MySQL .user;
+
+-- giving permission
+grant all privileges on '*' to user1@localhost
+
+-- show permission
+show grants for user1@localhost;
+
+grant update, delete, insert on batch12026 to user1@localhost;
+
+-- to withdraw permission
+revoke delete,update on batch12026 from user1@localhost;
+
+-- update/change user password
+alter user user1@localhost identified by 'user@123';
+
+-- drop user 
+drop user user1;
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+/*
+	STORED PROCEDURE(SP) := reusability 
+    -- it is the collection of pre-compiled sql statements stored inside the db
+    -- it always contains a name ,parameter-list and sql statements
+    -- 1st time u invoke a stored procedure mysql looks up for the name in the db catalog , compiles the stored procedure code placed it in a memory area known as cache and executes the stored procedure .
+    -- if u invoke the same SP in the same session again mysql just execute the SP from the cache without having to recompile it 
+    syntax:=
+		create procedure procedure_name(parameter-list)
+        begin
+			.......
+		end;
+*/
+
+-- creating procedure
+delimiter // 
+create procedure getEmployees()
+begin
+	select * from employee;
+end//
+delimiter ;
+
+-- calling procedure 
+call getEmployees();
+
+-- with parameter example
+desc person;
+select * from person;
+
+delimiter //
+create procedure insertPerson(id int, name varchar(30), email varchar(30),age int ,city varchar(50))
+begin
+	insert into person values (id,name,email,age,city);
+end//
+delimiter ;
+
+call insertPerson(107,'Raghu','raghu@gmail.com',36,'Kolkata');
+
+/*
+-- Function := block of organized reusable code i.e. used to perfrom action
+2 types 
+1. inbuilt functions
+2. user defined functions
+
+syntax 
+create function func_name(parameter-list)
+	return datatype 
+    [not] deterministic
+    begin
+		........
+	end;
+-- by default all parameters are IN parameters u cannot specify IN,OUT or INOUT modifiers to parameter 
+-- speicify a function is deterministic or not , deterministic function always returns the same result for the same input parameter
+-- whereas non - deterministic functions return differsnt results for the input parameter
+-- if u dont use deterministic or non deterministic ,mysql uses non deterministic by default
+*/
+
+delimiter //
+create function studentGrade(percentage float)
+returns varchar(20)
+deterministic
+begin
+	declare grade varchar(20);
+		if percentage > 90 then
+			set grade = 'A';
+		elseif percentage > 80 then
+			set grade = 'B';
+		elseif percentage > 70 then
+			set grade = 'C';
+		else
+			set grade ='F';
+		end if;
+	return grade;
+end //
+delimiter ;
+
+select * from student;
+select std_name,percentage, studentGrade(percentage) from student;
+
+-- index 
+/*
+-myaql uses indexex to quickly find rows with speific column values 
+- without an index, mysql must scan the whole table  to locate the relevant rows. the larger table slower it searches
+- index is a data structure that allows us to add indexes in the existing table
+- it enables u to improve the faster retrival of records on db table
+- when a table is created with primary key or unique key it automatically creates a special index named PRIMARY , we call this index as clustered index 
+- all indexes other than primary indexes are known as non clustered indexes or secondary index.
+*/
+
+-- creating index while creating table
+create table demoindex
+(
+	col1 int primary key,
+    col2 int,
+    col3 int ,
+    col4 varchar(50),
+    index(col3,col4)
+);
+
+-- creating index on existing table
+-- create index index_name on table_name (col1,col2);
+
+create index employeeindex on employee(emp_name,salary,designation);
+select * from employee;
+
+
+-- view indexes 
+show indexes from employee;
+
+-- trigger 
+
+create table emp
+(
+	eid int primary key,
+    ename varchar(20),
+    designation varchar(50),
+    working_days date ,
+    working_hrs int
+);
+
+insert into emp values (101,'raj','HR','2021-10-09',10);
+insert into emp values (102,'raju','Manager','2024-11-29',19);
+insert into emp values (103,'rajesh','Salesman','2023-04-19',30);
+
+delimiter //
+create trigger before_insert_working_hrs
+before insert
+on emp for each row
+begin
+	if new.working_hrs<0 then 
+		set new.working_hrs=0;
+	end if;
+end//
+delimiter ;
+
+-- view trigger
+show triggers;
+
+
+
+
+
+

@@ -1,0 +1,172 @@
+SQL Assignment - 4 
+
+-- 1. Employee Table 
+use batch12026;
+
+create table Employee
+(
+	emp_id int,
+    emp_name varchar(50),
+    salary float,
+    DOJ date,
+    designation varchar(30),
+    city varchar(50)
+);  
+select * from employee;
+desc employee;
+
+-- inserting into table Employee 
+insert into Employee values (101,'Mithun',50000,'2024-10-10','Developer','Bangalore'); 
+insert into Employee values (102,'Vardhan',30000,'2024-12-16','HR','Mumbai');
+insert into Employee values (103,'Ajay',25000,'2024-01-19','Manager','pune');
+insert into Employee values (104,'Ganesh',40000,'2008-10-04','HR','jaipur');
+insert into Employee values (105,'Dheeraj',45000,'2024-09-01','Accountant','Bangalore');
+insert into Employee values (106,'suresh',95000,'2018-12-14','Manager','Mysore');
+insert into Employee values (107,'Ramesh',18000,'2024-02-08','Technical Assistant','Mangalore');
+insert into Employee values (108,'raj',65000,'2024-07-07','Analyst','Bangalore');
+
+-- ----------------------------------------------------------------------------------------------------------
+-- TASKS ON EMPLOYEE TABLE 
+
+--  Select all employees with a salary greater than 50000.
+select * from employee where salary>50000;
+
+-- Select all employees and sort them by last name in ascending order
+select * from employee order by emp_name; -- ascending order of name
+select * from employee order by emp_name desc; -- descending order of name 
+
+--  Select the average salary for each department.
+select avg(salary) as Avg_salary , designation from employee group by designation;
+
+-- Select departments with an average salary greater than 60000.
+select avg(salary) as Avg_salary , designation from employee group by designation having avg(salary)>60000;
+
+--  Select the top 5 highest-paid employees.
+select * from employee order by salary desc limit 5;
+
+-- Select designation(unique) from the employees table.
+select distinct designation from employee;
+
+-- Select the top 3 departments with the highest average salary and sort them by average salary in descending order.
+select avg(salary) as Avg_Salary , designation from employee group by designation order by Avg_salary desc limit 3;
+
+-- Find the total number of employees in each city
+select count(emp_id) as No_of_emp,city from employee  group by city;
+
+-- Select all employees who joined in the year 2024
+select * from employee where DOJ >='2024-01-01';
+
+-- Select the employees who have the designation 'Manager' and are based in 'Pune'.
+select * from employee where designation = 'Manager' and city = 'Pune';
+
+-- Select all employees whose names start with 'R'.
+select * from employee where emp_name like 'r%';
+
+-- 	Select all employees whose city contains 'i'.
+select * from employee where city like '%i%';
+
+-- ------------------------------------------------------------------------------------------------------
+-- QUERIES ON EMPLOYEE TABLE
+
+-- Q1 Select employees whose salary is above the average salary.
+select salary ,emp_name,designation from employee where salary > (select avg(salary) from employee) group by emp_name,designation,salary; -- avg in current table is 46000
+
+-- Q2  Select the name and salary of employees who have the same designation as the employee with empId 106.
+select emp_name, salary
+from employee 
+where designation in (
+    select designation
+    from employee 
+    where emp_id = 106
+);
+
+-- Q3 Select the employee details who joined most recently.
+select * from employee order by DOJ desc limit 1;
+
+-- Q4 Select the employees who work in the same city as the employee named 'Mithun'.
+select * from employee where city in(select city from employee where emp_name='Mithun');
+
+-- Q5  Select the employees who earn more than the highest-paid employee in the 'HR' department.
+select * from employee where salary > (select salary from employee where designation='HR' order by salary desc limit 1); -- highest salary earned by ganesh in HR dept with salary = 40000, so the employees whose salary is more than the 40k is displayed
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--2. PRODUCTS TABLE 
+
+
+create table products
+(
+	prod_id int primary key,
+    prod_name varchar(100) not null,
+    category varchar(50) not null,
+    price decimal(10,2) not null check(price>0),
+    qty int not null check(qty>0)
+);
+
+-- inserting values in products table
+insert into products values(101,'Book','Stationary',150.00,5);
+insert into products values(102,'Shirt','Cloth',150.00,2);
+insert into products values(103,'Vessel','Utensils',800.00,8);
+insert into products values(104,'Wheat','Grocery',1500.00,20);
+insert into products values(105,'Rice','Grocery',2000.00,15);
+insert into products values(106,'T-shirt','cloth',500,3);
+
+select * from products;
+
+-- -------------------------------------------------------------------------------------------------------------------------------------
+-- TASKS on PRODUCTS TABLE
+
+-- Select all products where the category is 'Grocery'.
+select * from products where category = 'Grocery';
+
+-- Select all products and sort them by price in descending order.
+select * from products order by price desc;
+
+-- Select the total quantity of products for each category.
+select sum(qty) as Total_Qty , category from products group by category;
+
+-- Select categories with a total quantity greater than 20.
+select sum(qty) as Total_Qty , category from products group by category having Total_qty > 20;
+
+-- Select the first 3 products in the products table.
+select * from products limit 3;
+
+-- Select distinct product categories from the products table.
+select distinct category from products;
+
+-- Select distinct product categories, order them by category name, and limit the result to the first 3 categories.
+select distinct category from products order by category limit 3;
+
+-- Find the average price of products in each category.
+select avg(price) as Avg_price , category from products group by category; -- grocery avg is 1750 displayed , cloth avg = 325
+
+-- Select all products where the quantity is less than 10.
+select * from products where qty <10;
+
+-- Select products with the word 'shirt' in their name.
+select * from products where prod_name like '%shirt%';
+
+-- Select all products whose names start with 's'.
+select * from products where prod_name like 's%';
+
+-- Select all products whose category ends with 't'.
+select * from products where prod_name like '%t';
+
+-- -----------------------------------------------------------------------------------------------------------------------------------------------------
+-- QUERIES ON PRODUCT TABLE
+
+select avg(price) as Avg_price from products; -- avg = 850
+-- Q1 Select products whose price is higher than the average price of all products.
+select price, prod_name from products where price > (select avg(price) from products) group by prod_name,price ;
+
+-- Q2 Select the name and price of products that belong to the same category as the product named 'rice'.
+select prod_name,price,category from products where category in (select category from products where prod_name='rice');
+
+-- Q3 Select the details of the product with the highest quantity.
+select * from products order by qty desc limit 1;
+
+-- Q4  Select the products whose quantity is less than the average quantity of products in the 'cloth' category.
+select  * from products where qty < (select avg(qty) from products where category='cloth');
+
+-- Q5 Select the products that have a price higher than the most expensive product in the 'cloth' category.
+select * from products where price > (select max(price) from products where category='cloth'); -- highest price in cloth category is 500
